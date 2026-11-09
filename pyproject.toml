@@ -1,0 +1,98 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tr-bm25"
+version = "0.1.0"
+description = "Tiny Turkish BM25 search with proper İ/ı handling, stemming and negation-safe stopwords."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [{ name = "Yusuf Berat Zengin", email = "118852217+YusufBeratZengin@users.noreply.github.com" }]
+keywords = ["turkish", "bm25", "search", "nlp", "rag", "stemming", "information-retrieval"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Natural Language :: Turkish",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Text Processing :: Linguistic",
+  "Topic :: Text Processing :: Indexing",
+  "Typing :: Typed",
+]
+dependencies = []
+
+[project.optional-dependencies]
+kok = ["PyStemmer>=2.2"]
+dev = [
+  "PyStemmer>=2.2",
+  "mypy>=1.8",
+  "pytest>=7.4",
+  "pytest-cov>=4.1",
+  "ruff==0.17.4",
+]
+
+[project.scripts]
+tr-bm25 = "tr_bm25.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/YusufBeratZengin/tr-bm25"
+Issues = "https://github.com/YusufBeratZengin/tr-bm25/issues"
+Changelog = "https://github.com/YusufBeratZengin/tr-bm25/blob/main/CHANGELOG.md"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tr_bm25"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/tr_bm25", "tests", "README.md", "README.tr.md", "CHANGELOG.md", "LICENSE"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra --strict-markers"
+markers = [
+  "yavas: 10 bin belgelik ölçüm testi (varsayılan olarak çalışır, PYTEST_ATLA_YAVAS=1 ile atlanır)",
+]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.coverage.run]
+branch = true
+source = ["tr_bm25"]
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+  "pragma: no cover",
+  "if TYPE_CHECKING:",
+  "raise NotImplementedError",
+]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM", "RUF"]
+# RUF022/SIM905: stylistic rules from newer ruff releases; the code keeps its explicit layout.
+ignore = ["RUF001", "RUF002", "RUF003", "RUF022", "SIM905"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E501"]
+
+[tool.mypy]
+python_version = "3.10"
+mypy_path = "src"
+packages = ["tr_bm25"]
+strict = true
+warn_unreachable = true
+show_error_codes = true
+
+[[tool.mypy.overrides]]
+module = ["Stemmer"]
+ignore_missing_imports = true
